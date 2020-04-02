@@ -9,9 +9,11 @@ const Schema = mongoose.Schema
 
 const UserSchema = new Schema(
   {
-    name: {
+    channelName: {
       type: String,
-      required: [true, 'Please add a name']
+      required: [true, 'Please add a channel name'],
+      unique: true,
+      uniqueCaseInsensitive: true
     },
     email: {
       type: String,
@@ -22,6 +24,10 @@ const UserSchema = new Schema(
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
         'Please add a valid email'
       ]
+    },
+    photoUrl: {
+      type: String,
+      default: 'no-photo.jpg'
     },
     role: {
       type: String,

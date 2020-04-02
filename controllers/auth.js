@@ -9,15 +9,14 @@ const User = require('../models/User')
 // @route   POST /api/v1/auth/register
 // @access  Public
 exports.register = asyncHandler(async (req, res, next) => {
-  let { name, email, password, role } = req.body
+  let { channelName, email, password } = req.body
 
   email = email.toLowerCase()
 
   user = await User.create({
-    name,
+    channelName,
     email,
-    password,
-    role
+    password
   })
 
   sendTokenResponse(user, 200, res)
@@ -76,7 +75,7 @@ exports.getMe = asyncHandler(async (req, res, next) => {
 // @access  Private
 exports.updateDetails = asyncHandler(async (req, res, next) => {
   const fieldsToUpdate = {
-    name: req.body.name,
+    channelName: req.body.channelName,
     email: req.body.email.toLowerCase()
   }
   const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {

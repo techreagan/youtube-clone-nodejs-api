@@ -17,7 +17,7 @@
 
 Hosted on netlify: [Coming Soon]()
 
-Extensive and testing documentation with postman: [VueTube API](https://documenter.getpostman.com/view/9407876/SzYW3zz8?version=latest)
+Extensive and testing documentation with postman: [VueTube API](https://documenter.getpostman.com/view/9407876/SzYaVdtC?version=latest)
 
 ## Database Model
 
@@ -43,6 +43,9 @@ MONGO_URI=YOUR_URL
 JWT_SECRET=YOUR_SECRET
 JWT_EXPIRE=30d
 JWT_COOKIE_EXPIRE=30
+
+FILE_UPLOAD_PATH = ./public/uploads
+MAX_FILE_UPLOAD = 1000000
 
 SMTP_HOST=smtp.mailtrap.io
 SMTP_PORT=2525
