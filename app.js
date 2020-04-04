@@ -4,6 +4,7 @@ const colors = require('colors')
 const morgan = require('morgan')
 const cookieParser = require('cookie-parser')
 const mongoSanitize = require('express-mongo-sanitize')
+const fileupload = require('express-fileupload')
 const helmet = require('helmet')
 const xss = require('xss-clean')
 const rateLimit = require('express-rate-limit')
@@ -21,6 +22,7 @@ DBConnection()
 const authRoutes = require('./routes/auth')
 const userRoutes = require('./routes/users')
 const categoryRoutes = require('./routes/categories')
+const videoRoutes = require('./routes/videos')
 
 const app = express()
 
@@ -31,6 +33,13 @@ app.use(cookieParser())
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'))
 }
+
+// File uploading
+app.use(
+  fileupload({
+    createParentPath: true
+  })
+)
 
 // Sanitize data
 app.use(mongoSanitize())
@@ -60,6 +69,7 @@ const versionOne = routeName => `/api/v1/${routeName}`
 app.use(versionOne('auth'), authRoutes)
 app.use(versionOne('users'), userRoutes)
 app.use(versionOne('categories'), categoryRoutes)
+app.use(versionOne('videos'), videoRoutes)
 
 app.use(errorHandler)
 
