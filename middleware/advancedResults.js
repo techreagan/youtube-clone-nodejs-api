@@ -1,15 +1,37 @@
 // @eg      housing=true&select=name,location.city&sort=-name,location.state
 // ?averageCost[lte]=10000
-const advancedResults = (model, populate) => async (req, res, next) => {
+const advancedResults = (model, populates, visibility = '') => async (
+  req,
+  res,
+  next
+) => {
   let query
+  if (visibility == 'private') {
+    req.query.userId = req.user._id
+  } else if (visibility == 'public') {
+    req.query.status = 'public'
+  }
+  // if (req.query.visibility == 'true') {
+  //   req.query.status = 'public'
+  // } else if (!req.user) {
+  //   console.log(req.user)
+  //   return res
+  //     .status(200)
+  //     .json({ success: true, count: 0, totalPage: 1, pagination: {}, data: [] })
+  // } else {
+  //   req.query.userId = req.user._id
+  //   console.log(req.query.userId)
+  // }
+
+  // delete req.query.visibility
 
   const reqQuery = { ...req.query }
 
   const removeFields = ['select', 'sort', 'page', 'limit']
-  removeFields.forEach(param => delete reqQuery[param])
+  removeFields.forEach((param) => delete reqQuery[param])
 
   let queryStr = JSON.stringify(reqQuery)
-  queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`)
+  queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, (match) => `$${match}`)
 
   query = model.find(JSON.parse(queryStr))
 
@@ -36,8 +58,10 @@ const advancedResults = (model, populate) => async (req, res, next) => {
 
   query = query.skip(startIndex).limit(limit)
 
-  if (populate) {
-    query = query.populate(populate)
+  if (populates) {
+    populates.forEach((populate) => {
+      query = query.populate(populate)
+    })
   }
 
   const results = await query
@@ -48,14 +72,14 @@ const advancedResults = (model, populate) => async (req, res, next) => {
   if (endIndex < total) {
     pagination.next = {
       page: page + 1,
-      limit
+      limit,
     }
   }
 
   if (startIndex > 0) {
     pagination.prev = {
       page: page - 1,
-      limit
+      limit,
     }
   }
 
@@ -64,7 +88,7 @@ const advancedResults = (model, populate) => async (req, res, next) => {
     count: results.length,
     totalPage,
     pagination,
-    data: results
+    data: results,
   }
   next()
 }

@@ -30,7 +30,7 @@ exports.getCategory = asyncHandler(async (req, res, next) => {
 exports.createCategory = asyncHandler(async (req, res, next) => {
   const category = await Category.create({
     ...req.body,
-    user: req.user.id
+    userId: req.user.id,
   })
 
   return res.status(200).json({ sucess: true, data: category })
@@ -43,7 +43,7 @@ exports.updateCategory = asyncHandler(async (req, res, next) => {
   const category = await Category.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
-    context: 'query'
+    context: 'query',
   })
 
   if (!category)

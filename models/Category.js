@@ -11,18 +11,18 @@ const CategorySchema = new Schema(
       trim: true,
       unique: true,
       uniqueCaseInsensitive: true,
-      required: [true, 'Title is required']
+      required: [true, 'Title is required'],
     },
     description: {
       type: String,
       minlength: [3, 'Description must be three characters long'],
-      required: [true, 'Description is required']
+      required: [true, 'Description is required'],
     },
-    user: {
+    userId: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
-      required: true
-    }
+      required: true,
+    },
   },
   { timestamps: true }
 )

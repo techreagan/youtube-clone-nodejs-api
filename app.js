@@ -23,6 +23,7 @@ const authRoutes = require('./routes/auth')
 const userRoutes = require('./routes/users')
 const categoryRoutes = require('./routes/categories')
 const videoRoutes = require('./routes/videos')
+const commentRoutes = require('./routes/comments')
 
 const app = express()
 
@@ -37,7 +38,7 @@ if (process.env.NODE_ENV === 'development') {
 // File uploading
 app.use(
   fileupload({
-    createParentPath: true
+    createParentPath: true,
   })
 )
 
@@ -56,7 +57,7 @@ app.use(cors())
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 mins
-  max: 100 // 100 request per 10 mins
+  max: 100, // 100 request per 10 mins
 })
 
 app.use(limiter)
@@ -64,12 +65,13 @@ app.use(limiter)
 // Prevent http param pollution
 app.use(hpp())
 
-const versionOne = routeName => `/api/v1/${routeName}`
+const versionOne = (routeName) => `/api/v1/${routeName}`
 
 app.use(versionOne('auth'), authRoutes)
 app.use(versionOne('users'), userRoutes)
 app.use(versionOne('categories'), categoryRoutes)
 app.use(versionOne('videos'), videoRoutes)
+app.use(versionOne('comments'), commentRoutes)
 
 app.use(errorHandler)
 

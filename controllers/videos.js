@@ -50,9 +50,9 @@ exports.videoUpload = asyncHandler(async (req, res, next) => {
     await videoModel.remove()
     return next(
       new ErrorResponse(
-        `Please upload a video less than ${(process.env.MAX_FILE_UPLOAD * 5) /
-          1000 /
-          1000}mb`,
+        `Please upload a video less than ${
+          (process.env.MAX_FILE_UPLOAD * 5) / 1000 / 1000
+        }mb`,
         404
       )
     )
@@ -62,7 +62,7 @@ exports.videoUpload = asyncHandler(async (req, res, next) => {
 
   video.mv(
     `${process.env.FILE_UPLOAD_PATH}/videos/${video.name}`,
-    async err => {
+    async (err) => {
       if (err) {
         await videoModel.remove()
         console.error(err)
@@ -73,7 +73,7 @@ exports.videoUpload = asyncHandler(async (req, res, next) => {
         videoModel._id,
         {
           url: video.name,
-          title: video.originalName
+          title: video.originalName,
         },
         { new: true, runValidators: true }
       )
@@ -89,7 +89,7 @@ exports.videoUpload = asyncHandler(async (req, res, next) => {
 exports.updateVideo = asyncHandler(async (req, res, next) => {
   const video = await Video.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
-    runValidators: true
+    runValidators: true,
   })
 
   if (!video)
@@ -112,7 +112,7 @@ exports.deleteVideo = asyncHandler(async (req, res, next) => {
   // if (video) {
   fs.unlink(
     `${process.env.FILE_UPLOAD_PATH}/videos/${video.url}`,
-    async err => {
+    async (err) => {
       await video.remove()
       if (err) {
         return next(
