@@ -2,16 +2,16 @@ const mongoose = require('mongoose')
 
 const Schema = mongoose.Schema
 
-const CommentSchema = new Schema(
+const ReplySchema = new Schema(
   {
     text: {
       type: String,
       minlength: [3, 'Must be three characters long'],
       required: [true, 'Text is required'],
     },
-    videoId: {
+    commentId: {
       type: mongoose.Schema.ObjectId,
-      ref: 'Video',
+      ref: 'Comment',
       required: true,
     },
     userId: {
@@ -22,12 +22,8 @@ const CommentSchema = new Schema(
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true }, timestamps: true }
 )
-
-CommentSchema.virtual('replies', {
-  ref: 'Reply',
-  localField: '_id',
-  foreignField: 'commentId',
-  justOne: false,
+ReplySchema.pre('find', function () {
+  this.populate({ path: 'userId', select: 'channelName' })
 })
 
-module.exports = mongoose.model('Comment', CommentSchema)
+module.exports = mongoose.model('Reply', ReplySchema)

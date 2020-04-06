@@ -24,6 +24,7 @@ const userRoutes = require('./routes/users')
 const categoryRoutes = require('./routes/categories')
 const videoRoutes = require('./routes/videos')
 const commentRoutes = require('./routes/comments')
+const replyRoutes = require('./routes/replies')
 
 const app = express()
 
@@ -72,6 +73,7 @@ app.use(versionOne('users'), userRoutes)
 app.use(versionOne('categories'), categoryRoutes)
 app.use(versionOne('videos'), videoRoutes)
 app.use(versionOne('comments'), commentRoutes)
+app.use(versionOne('replies'), replyRoutes)
 
 app.use(errorHandler)
 

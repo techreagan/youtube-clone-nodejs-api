@@ -14,9 +14,10 @@ exports.getComments = asyncHandler(async (req, res, next) => {
 // @route   GET /api/v1/comments/:videoId/videos
 // @access  Private/Admin
 exports.getCommentByVideoId = asyncHandler(async (req, res, next) => {
-  const comments = await Comment.find({ videoId: req.params.videoId }).populate(
-    'userId'
-  )
+  const comments = await Comment.find({ videoId: req.params.videoId })
+    .populate('userId')
+    .populate('replies')
+  // const comments = await Comment.find({})
 
   if (!comments) {
     return next(
@@ -64,23 +65,21 @@ exports.updateComment = asyncHandler(async (req, res, next) => {
     )
   }
 
-  if (comment.userId.toString() != req.user._id.toString()) {
+  if (
+    comment.userId.toString() == req.user._id.toString() ||
+    comment.videoId.userId.toString() == req.user._id.toString()
+  ) {
+    comment = await Comment.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    })
+
+    res.status(200).json({ success: true, data: comment })
+  } else {
     return next(
       new ErrorResponse(`You are not authorized to update this comment`, 400)
     )
   }
-
-  if (comment.videoId.userId.toString() != req.user._id.toString()) {
-    return next(
-      new ErrorResponse(`You are not authorized to update this comment`, 400)
-    )
-  }
-  comment = await Comment.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  })
-
-  res.status(200).json({ success: true, data: comment })
 })
 
 // @desc    Delete comment
