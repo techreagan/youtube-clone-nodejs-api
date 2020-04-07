@@ -35,8 +35,26 @@ const VideoSchema = new Schema(
       required: true
     }
   },
-  { timestamps: true }
+  { toJSON: { virtuals: true }, toObject: { virtuals: true }, timestamps: true }
 )
+
+VideoSchema.virtual('likes', {
+  ref: 'Feeling',
+  localField: '_id',
+  foreignField: 'videoId',
+  justOne: false,
+  count: true,
+  match: { type: 'like' }
+})
+
+VideoSchema.virtual('dislikes', {
+  ref: 'Feeling',
+  localField: '_id',
+  foreignField: 'videoId',
+  justOne: false,
+  count: true,
+  match: { type: 'dislike' }
+})
 
 // VideoSchema.plugin(uniqueValidator, { message: '{PATH} already exists.' })
 

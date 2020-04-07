@@ -4,7 +4,7 @@ const {
   getVideo,
   videoUpload,
   updateVideo,
-  deleteVideo,
+  deleteVideo
 } = require('../controllers/videos')
 
 const Video = require('../models/Video')
@@ -17,6 +17,8 @@ const { protect, authorize } = require('../middleware/auth')
 // router.use(protect)
 // router.use(authorize('admin'))
 
+router.post('/', protect, videoUpload)
+
 router
   .route('/private')
   .get(
@@ -28,14 +30,18 @@ router
     ),
     getVideos
   )
-  .post(protect, videoUpload)
 
 router
   .route('/public')
   .get(
     advancedResults(
       Video,
-      [{ path: 'userId' }, { path: 'categoryId' }],
+      [
+        { path: 'userId' },
+        { path: 'categoryId' },
+        { path: 'likes' },
+        { path: 'dislikes' }
+      ],
       'public'
     ),
     getVideos
