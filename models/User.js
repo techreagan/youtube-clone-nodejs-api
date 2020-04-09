@@ -43,15 +43,26 @@ const UserSchema = new Schema(
     resetPasswordToken: String,
     resetPasswordExpire: Date
   },
-  {
-    timestamps: true
-  }
+  { toJSON: { virtuals: true }, toObject: { virtuals: true }, timestamps: true }
 )
+
+UserSchema.virtual('subscribers', {
+  ref: 'Subscription',
+  localField: '_id',
+  foreignField: 'channelId',
+  justOne: false,
+  count: true,
+  match: { userId: this._id }
+})
 
 UserSchema.plugin(uniqueValidator, { message: '{PATH} already exists.' })
 
+UserSchema.pre('find', function () {
+  this.populate({ path: 'subscribers' })
+})
+
 // Ecrypt Password
-UserSchema.pre('save', async function(next) {
+UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     next()
   }
@@ -60,17 +71,17 @@ UserSchema.pre('save', async function(next) {
   this.password = await bcrypt.hash(this.password, salt)
 })
 
-UserSchema.methods.matchPassword = async function(enteredPassword) {
+UserSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password)
 }
 
-UserSchema.methods.getSignedJwtToken = function() {
+UserSchema.methods.getSignedJwtToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE
   })
 }
 
-UserSchema.methods.getResetPasswordToken = function() {
+UserSchema.methods.getResetPasswordToken = function () {
   // Generate token
   const resetToken = crypto.randomBytes(20).toString('hex')
 

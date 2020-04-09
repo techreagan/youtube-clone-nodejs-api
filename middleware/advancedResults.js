@@ -1,16 +1,21 @@
 // @eg      housing=true&select=name,location.city&sort=-name,location.state
 // ?averageCost[lte]=10000
-const advancedResults = (model, populates, visibility = '') => async (
-  req,
-  res,
-  next
-) => {
+const advancedResults = (
+  model,
+  populates,
+  visibility = { status: '', filter: '' }
+) => async (req, res, next) => {
   let query
-  if (visibility == 'private') {
+  if (visibility.status == 'private') {
     req.query.userId = req.user._id
-  } else if (visibility == 'public') {
+    if (visibility.filter == 'channel') {
+      req.query.channelId = req.user._id
+      delete req.query.userId
+    }
+  } else if (visibility.status == 'public') {
     req.query.status = 'public'
   }
+
   // if (req.query.visibility == 'true') {
   //   req.query.status = 'public'
   // } else if (!req.user) {
@@ -72,14 +77,14 @@ const advancedResults = (model, populates, visibility = '') => async (
   if (endIndex < total) {
     pagination.next = {
       page: page + 1,
-      limit,
+      limit
     }
   }
 
   if (startIndex > 0) {
     pagination.prev = {
       page: page - 1,
-      limit,
+      limit
     }
   }
 
@@ -88,7 +93,7 @@ const advancedResults = (model, populates, visibility = '') => async (
     count: results.length,
     totalPage,
     pagination,
-    data: results,
+    data: results
   }
   next()
 }

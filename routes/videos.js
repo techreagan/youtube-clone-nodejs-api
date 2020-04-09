@@ -19,17 +19,13 @@ const { protect, authorize } = require('../middleware/auth')
 
 router.post('/', protect, videoUpload)
 
-router
-  .route('/private')
-  .get(
-    protect,
-    advancedResults(
-      Video,
-      [{ path: 'userId' }, { path: 'categoryId' }],
-      'private'
-    ),
-    getVideos
-  )
+router.route('/private').get(
+  protect,
+  advancedResults(Video, [{ path: 'userId' }, { path: 'categoryId' }], {
+    status: 'private'
+  }),
+  getVideos
+)
 
 router
   .route('/public')
@@ -42,7 +38,7 @@ router
         { path: 'likes' },
         { path: 'dislikes' }
       ],
-      'public'
+      { status: 'public' }
     ),
     getVideos
   )
