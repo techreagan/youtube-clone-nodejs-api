@@ -27,6 +27,7 @@ const commentRoutes = require('./routes/comments')
 const replyRoutes = require('./routes/replies')
 const feelingRoutes = require('./routes/feelings')
 const subscriptionRoutes = require('./routes/subscriptions')
+const historiesRoutes = require('./routes/histories')
 
 const app = express()
 
@@ -78,6 +79,7 @@ app.use(versionOne('comments'), commentRoutes)
 app.use(versionOne('replies'), replyRoutes)
 app.use(versionOne('feelings'), feelingRoutes)
 app.use(versionOne('subscriptions'), subscriptionRoutes)
+app.use(versionOne('histories'), historiesRoutes)
 
 app.use(errorHandler)
 

@@ -1,5 +1,6 @@
 // @eg      housing=true&select=name,location.city&sort=-name,location.state
 // ?averageCost[lte]=10000
+
 const advancedResults = (
   model,
   populates,
@@ -15,20 +16,6 @@ const advancedResults = (
   } else if (visibility.status == 'public') {
     req.query.status = 'public'
   }
-
-  // if (req.query.visibility == 'true') {
-  //   req.query.status = 'public'
-  // } else if (!req.user) {
-  //   console.log(req.user)
-  //   return res
-  //     .status(200)
-  //     .json({ success: true, count: 0, totalPage: 1, pagination: {}, data: [] })
-  // } else {
-  //   req.query.userId = req.user._id
-  //   console.log(req.query.userId)
-  // }
-
-  // delete req.query.visibility
 
   const reqQuery = { ...req.query }
 
