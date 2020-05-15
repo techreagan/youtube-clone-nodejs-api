@@ -3,6 +3,7 @@ const fs = require('fs')
 const asyncHandler = require('../middleware/async')
 const ErrorResponse = require('../utils/errorResponse')
 const Video = require('../models/Video')
+const Comment = require('../models/Comment')
 
 // @desc    Get videos
 // @route   GET /api/v1/videos
@@ -16,11 +17,20 @@ exports.getVideos = asyncHandler(async (req, res, next) => {
 // @access  Private/Admin
 exports.getVideo = asyncHandler(async (req, res, next) => {
   const video = await Video.findById(req.params.id)
-
+    .populate({
+      path: 'categoryId'
+    })
+    .populate({ path: 'userId', select: 'channelName subscribers photoUrl' })
+    .populate({ path: 'likes' })
+    .populate({ path: 'dislikes' })
+    .populate({ path: 'comments' })
   if (!video) {
     return next(new ErrorResponse(`No video with that id of ${req.params.id}`))
   }
 
+  // const comment = await Comment.find({ videoId: video._id })
+  // console.log(comment)
+  // video._doc.comments = comment
   res.status(200).json({ sucess: true, data: video })
 })
 
@@ -45,7 +55,7 @@ exports.videoUpload = asyncHandler(async (req, res, next) => {
     await videoModel.remove()
     return next(new ErrorResponse(`Please upload a video`, 404))
   }
-
+  console.log(video.size, process.env.MAX_FILE_UPLOAD * 5)
   if (video.size > process.env.MAX_FILE_UPLOAD * 5) {
     await videoModel.remove()
     return next(
@@ -73,7 +83,7 @@ exports.videoUpload = asyncHandler(async (req, res, next) => {
         videoModel._id,
         {
           url: video.name,
-          title: video.originalName,
+          title: video.originalName
         },
         { new: true, runValidators: true }
       )
@@ -84,18 +94,64 @@ exports.videoUpload = asyncHandler(async (req, res, next) => {
 })
 
 // @desc    Update video
-// @route   PUT /api/v1/videos
+// @route   PUT /api/v1/videos/:id
 // @access  Private/Admin
 exports.updateVideo = asyncHandler(async (req, res, next) => {
   const video = await Video.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
-    runValidators: true,
+    runValidators: true
   })
 
   if (!video)
     return next(new ErrorResponse(`No video with that id of ${req.params.id}`))
 
   res.status(200).json({ success: true, data: video })
+})
+
+// @desc    Upload thumbnail
+// @route   PUT /api/v1/videos/:id/thumbnail
+// @access  Private
+exports.uploadVideoThumbnail = asyncHandler(async (req, res, next) => {
+  const video = await Video.findById(req.params.id)
+  if (!video)
+    return next(new ErrorResponse(`No video with id of ${req.params.id}`, 404))
+
+  if (!req.files) {
+    return next(new ErrorResponse(`Please upload a file`, 404))
+  }
+
+  const file = req.files.thumbnail
+
+  if (!file.mimetype.startsWith('image')) {
+    return next(new ErrorResponse(`Please upload an image file`, 404))
+  }
+
+  if (file.size > process.env.MAX_FILE_UPLOAD) {
+    return next(
+      new ErrorResponse(
+        `Please upload an image less than ${
+          process.env.MAX_FILE_UPLOAD / 1000 / 1000
+        }mb`,
+        404
+      )
+    )
+  }
+
+  file.name = `thumbnail-${video._id}${path.parse(file.name).ext}`
+
+  file.mv(
+    `${process.env.FILE_UPLOAD_PATH}/thumbnails/${file.name}`,
+    async (err) => {
+      if (err) {
+        console.error(err)
+        return next(new ErrorResponse(`Problem with file upload`, 500))
+      }
+
+      await Video.findByIdAndUpdate(req.params.id, { thumbnailUrl: file.name })
+
+      res.status(200).json({ success: true, data: file.name })
+    }
+  )
 })
 
 // @desc    Delete video
@@ -113,7 +169,6 @@ exports.deleteVideo = asyncHandler(async (req, res, next) => {
   fs.unlink(
     `${process.env.FILE_UPLOAD_PATH}/videos/${video.url}`,
     async (err) => {
-      await video.remove()
       if (err) {
         return next(
           new ErrorResponse(
@@ -122,8 +177,21 @@ exports.deleteVideo = asyncHandler(async (req, res, next) => {
           )
         )
       }
-
-      return res.status(200).json({ success: true, video })
+      fs.unlink(
+        `${process.env.FILE_UPLOAD_PATH}/thumbnails/${video.thumbnailUrl}`,
+        async (err) => {
+          // if (err) {
+          //   return next(
+          //     new ErrorResponse(
+          //       `Something went wrong, couldn't delete video photo`,
+          //       500
+          //     )
+          //   )
+          // }
+          await video.remove()
+          return res.status(200).json({ success: true, video })
+        }
+      )
     }
   )
   // } else {

@@ -1,4 +1,5 @@
 const express = require('express')
+const path = require('path')
 const dotenv = require('dotenv')
 const colors = require('colors')
 const morgan = require('morgan')
@@ -59,15 +60,23 @@ app.use(xss())
 app.use(cors())
 
 // Rate limiting
-const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 10 mins
-  max: 100 // 100 request per 10 mins
-})
+// const limiter = rateLimit({
+//   windowMs: 10 * 60 * 1000, // 10 mins
+//   max: 100 // 100 request per 10 mins
+// })
 
-app.use(limiter)
+// app.use(limiter)
 
 // Prevent http param pollution
 app.use(hpp())
+
+app.use(express.static(path.join(__dirname, 'public')))
+
+app.use((req, res, next) => {
+  setTimeout(() => {
+    next()
+  }, 2000)
+})
 
 const versionOne = (routeName) => `/api/v1/${routeName}`
 

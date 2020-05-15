@@ -23,6 +23,22 @@ exports.getChannels = asyncHandler(async (req, res, next) => {
   res.status(200).json(res.advancedResults)
 })
 
+// @desc    Check subscription
+// @route   POST /api/v1/subscriptions/check
+// @access  Private/User
+exports.checkSubscription = asyncHandler(async (req, res, next) => {
+  const channel = await Subscription.findOne({
+    channelId: req.body.channelId,
+    subscriberId: req.user._id
+  })
+
+  if (!channel) {
+    return res.status(200).json({ success: true, data: {} })
+  }
+
+  return res.status(200).json({ success: true, data: channel })
+})
+
 // @desc    Create subscriber
 // @route   Post /api/v1/subscriptions
 // @access  Private

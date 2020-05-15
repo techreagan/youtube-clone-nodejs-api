@@ -1,4 +1,5 @@
 const crypto = require('crypto')
+const path = require('path')
 const asyncHandler = require('../middleware/async')
 const ErrorResponse = require('../utils/errorResponse')
 const sendEmail = require('../utils/sendEmail')
@@ -87,6 +88,49 @@ exports.updateDetails = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: user })
 })
 
+// @desc    Upload avatar
+// @route   PUT /api/v1/users
+// @access  Private
+exports.uploadChannelAvatar = asyncHandler(async (req, res, next) => {
+  if (!req.files) {
+    return next(new ErrorResponse(`Please upload a file`, 404))
+  }
+
+  const file = req.files.avatar
+
+  if (!file.mimetype.startsWith('image')) {
+    return next(new ErrorResponse(`Please upload an image file`, 404))
+  }
+
+  if (file.size > process.env.MAX_FILE_UPLOAD) {
+    return next(
+      new ErrorResponse(
+        `Please upload an image less than ${
+          process.env.MAX_FILE_UPLOAD / 1000 / 1000
+        }mb`,
+        404
+      )
+    )
+  }
+
+  file.name = `avatar-${req.user._id}${path.parse(file.name).ext}`
+
+  file.mv(
+    `${process.env.FILE_UPLOAD_PATH}/avatars/${file.name}`,
+    async (err) => {
+      if (err) {
+        console.error(err)
+        return next(new ErrorResponse(`Problem with file upload`, 500))
+      }
+
+      // await Bootcamp.findByIdAndUpdate(req.params.id, { photo: file.name })
+      req.user.photoUrl = file.name
+      await req.user.save()
+      res.status(200).json({ success: true, data: file.name })
+    }
+  )
+})
+
 // @desc    Update password
 // @route   PUT /api/v1/auth/updatepassword
 // @access  Private
@@ -94,7 +138,13 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.id).select('+password')
 
   if (!(await user.matchPassword(req.body.currentPassword))) {
-    return next(new ErrorResponse('Password is incorrect', 401))
+    // return next(new ErrorResponse('Password is incorrect', 401))
+    return res.status(400).json({
+      success: false,
+      error: [
+        { field: 'currentPassword', message: 'Current password is incorrect' }
+      ]
+    })
   }
 
   user.password = req.body.newPassword

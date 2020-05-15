@@ -4,6 +4,7 @@ const {
   getVideo,
   videoUpload,
   updateVideo,
+  uploadVideoThumbnail,
   deleteVideo
 } = require('../controllers/videos')
 
@@ -21,9 +22,19 @@ router.post('/', protect, videoUpload)
 
 router.route('/private').get(
   protect,
-  advancedResults(Video, [{ path: 'userId' }, { path: 'categoryId' }], {
-    status: 'private'
-  }),
+  advancedResults(
+    Video,
+    [
+      { path: 'userId' },
+      { path: 'categoryId' },
+      { path: 'likes' },
+      { path: 'dislikes' },
+      { path: 'comments' }
+    ],
+    {
+      status: 'private'
+    }
+  ),
   getVideos
 )
 
@@ -48,5 +59,7 @@ router
   .get(getVideo)
   .put(protect, updateVideo)
   .delete(protect, deleteVideo)
+
+router.route('/:id/thumbnails').put(protect, uploadVideoThumbnail)
 
 module.exports = router

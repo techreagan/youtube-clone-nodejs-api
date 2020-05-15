@@ -17,6 +17,7 @@ exports.getCommentByVideoId = asyncHandler(async (req, res, next) => {
   const comments = await Comment.find({ videoId: req.params.videoId })
     .populate('userId')
     .populate('replies')
+    .sort('-createdAt')
   // const comments = await Comment.find({})
 
   if (!comments) {
@@ -37,7 +38,7 @@ exports.createComment = asyncHandler(async (req, res, next) => {
   console.log(req.body.videoId)
   let video = await Video.findOne({
     _id: req.body.videoId,
-    status: 'public',
+    status: 'public'
   })
 
   if (!video) {
@@ -47,7 +48,7 @@ exports.createComment = asyncHandler(async (req, res, next) => {
   }
   const comment = await Comment.create({
     ...req.body,
-    userId: req.user._id,
+    userId: req.user._id
   })
 
   return res.status(200).json({ sucess: true, data: comment })
@@ -71,7 +72,7 @@ exports.updateComment = asyncHandler(async (req, res, next) => {
   ) {
     comment = await Comment.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
-      runValidators: true,
+      runValidators: true
     })
 
     res.status(200).json({ success: true, data: comment })

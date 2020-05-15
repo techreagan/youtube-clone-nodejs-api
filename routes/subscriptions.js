@@ -2,7 +2,8 @@ const express = require('express')
 const {
   getChannels,
   getSubscribers,
-  createSubscriber
+  createSubscriber,
+  checkSubscription
 } = require('../controllers/subscriptions')
 
 const Subscription = require('../models/Subscription')
@@ -13,6 +14,8 @@ const advancedResults = require('../middleware/advancedResults')
 const { protect, authorize } = require('../middleware/auth')
 
 router.post('/', protect, createSubscriber)
+
+router.post('/check', protect, checkSubscription)
 
 router.route('/subscribers').get(
   protect,

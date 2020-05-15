@@ -11,7 +11,12 @@ const VideoSchema = new Schema(
     },
     description: {
       type: String,
-      minlength: [6, 'Must be three characters long']
+      // minlength: [6, 'Must be six characters long'],
+      default: ''
+    },
+    thumbnailUrl: {
+      type: String,
+      default: 'no-photo.jpg'
     },
     views: {
       type: Number,
@@ -45,6 +50,23 @@ VideoSchema.virtual('dislikes', {
   justOne: false,
   count: true,
   match: { type: 'dislike' }
+})
+
+VideoSchema.virtual('likes', {
+  ref: 'Feeling',
+  localField: '_id',
+  foreignField: 'videoId',
+  justOne: false,
+  count: true,
+  match: { type: 'like' }
+})
+
+VideoSchema.virtual('comments', {
+  ref: 'Comment',
+  localField: '_id',
+  foreignField: 'videoId',
+  justOne: false,
+  count: true
 })
 
 // VideoSchema.plugin(uniqueValidator, { message: '{PATH} already exists.' })
