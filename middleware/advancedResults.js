@@ -42,13 +42,15 @@ const advancedResults = (
 
   // Pagination
   const page = parseInt(req.query.page, 10) || 1
-  const limit = parseInt(req.query.limit, 10) || 20
+  const limit = parseInt(req.query.limit, 10) || 10
   const startIndex = (page - 1) * limit
   const endIndex = page * limit
   const total = await model.countDocuments()
   const totalPage = Math.ceil(total / limit)
 
-  query = query.skip(startIndex).limit(limit)
+  if (parseInt(req.query.limit) !== 0) {
+    query = query.skip(startIndex).limit(limit)
+  }
 
   if (populates) {
     populates.forEach((populate) => {
@@ -75,12 +77,19 @@ const advancedResults = (
     }
   }
 
-  res.advancedResults = {
-    success: true,
-    count: results.length,
-    totalPage,
-    pagination,
-    data: results
+  if (parseInt(req.query.limit) !== 0) {
+    res.advancedResults = {
+      success: true,
+      count: results.length,
+      totalPage,
+      pagination,
+      data: results
+    }
+  } else {
+    res.advancedResults = {
+      success: true,
+      data: results
+    }
   }
   next()
 }
