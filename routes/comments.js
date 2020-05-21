@@ -3,27 +3,24 @@ const {
   getCommentByVideoId,
   createComment,
   updateComment,
-  deleteComment,
+  deleteComment
 } = require('../controllers/comments')
 
 const router = express.Router()
 
 // const advancedResults = require('../middleware/advancedResults')
-const { protect, authorize } = require('../middleware/auth')
-
-router.use(protect)
-// router.use(authorize('admin'))
+const { protect } = require('../middleware/auth')
 
 router
   .route('/')
   // .get(advancedResults(Category), getCategories)
-  .post(createComment)
+  .post(protect, createComment)
 
 router
   .route('/:id')
-  // .get(getCategory)
-  .put(updateComment)
-  .delete(deleteComment)
+
+  .put(protect, updateComment)
+  .delete(protect, deleteComment)
 
 router.route('/:videoId/videos').get(getCommentByVideoId)
 
