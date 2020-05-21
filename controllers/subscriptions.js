@@ -66,3 +66,22 @@ exports.createSubscriber = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({ success: true, data: subscription })
 })
+
+// @desc    Get subscriped videos
+// @route   GET /api/v1/subscriptions/videos
+// @access  Private/User
+exports.getSubscripedVideos = asyncHandler(async (req, res, next) => {
+  const channels = await Subscription.find({
+    subscriberId: req.user._id
+  })
+
+  const channelsId = channels.map((channel) => {
+    return {
+      userId: channel.channelId.toString()
+    }
+  })
+
+  const videos = await Video.find({ status: 'public' }).or(channelsId)
+
+  return res.status(200).json({ success: true, data: videos })
+})

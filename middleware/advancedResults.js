@@ -1,5 +1,4 @@
-// @eg      housing=true&select=name,location.city&sort=-name,location.state
-// ?averageCost[lte]=10000
+// @eg      channelName=reagan&select=email&sort=-channelName,email
 
 const advancedResults = (
   model,
