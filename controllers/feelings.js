@@ -1,35 +1,7 @@
 const asyncHandler = require('../middleware/async')
 const ErrorResponse = require('../utils/errorResponse')
-const Comment = require('../models/Comment')
 const Video = require('../models/Video')
 const Feeling = require('../models/Feeling')
-
-// @desc    Get comments
-// @route   GET /api/v1/categories
-// @access  Private/Admin
-exports.getComments = asyncHandler(async (req, res, next) => {
-  res.status(200).json(res.advancedResults)
-})
-
-// @desc    Get comments by video id
-// @route   GET /api/v1/comments/:videoId/videos
-// @access  Private/Admin
-exports.getCommentByVideoId = asyncHandler(async (req, res, next) => {
-  const comments = await Comment.find({ videoId: req.params.videoId })
-    .populate('userId')
-    .populate('replies')
-  // const comments = await Comment.find({})
-
-  if (!comments) {
-    return next(
-      new ErrorResponse(
-        `No comment with that video id of ${req.params.videoId}`
-      )
-    )
-  }
-
-  res.status(200).json({ sucess: true, data: comments })
-})
 
 // @desc    Create feeling
 // @route   POST /api/v1/feelings/
@@ -83,58 +55,20 @@ exports.createFeeling = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: feeling })
 })
 
-// @desc    Update comment
-// @route   PUT /api/v1/comments/:id
-// @access  Private/Admin
-exports.updateComment = asyncHandler(async (req, res, next) => {
-  let comment = await Comment.findById(req.params.id).populate('videoId')
+// @desc    Check feeling
+// @route   POST /api/v1/feelings/check
+// @access  Private/User
+exports.checkFeeling = asyncHandler(async (req, res, next) => {
+  const feeling = await Feeling.findOne({
+    videoId: req.body.videoId,
+    userId: req.user._id
+  })
 
-  if (!comment) {
-    return next(
-      new ErrorResponse(`No comment with id of ${req.params.id}`, 404)
-    )
+  if (!feeling) {
+    return res.status(200).json({ success: true, data: { feeling: '' } })
   }
 
-  if (
-    comment.userId.toString() == req.user._id.toString() ||
-    comment.videoId.userId.toString() == req.user._id.toString()
-  ) {
-    comment = await Comment.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true
-    })
-
-    res.status(200).json({ success: true, data: comment })
-  } else {
-    return next(
-      new ErrorResponse(`You are not authorized to update this comment`, 400)
-    )
-  }
-})
-
-// @desc    Delete comment
-// @route   DELETE /api/v1/comments/:id
-// @access  Public
-exports.deleteComment = asyncHandler(async (req, res, next) => {
-  // const comment = await comment.findByIdAndDelete(req.params.id)
-  let comment = await Comment.findById(req.params.id).populate('videoId')
-
-  if (!comment) {
-    return next(
-      new ErrorResponse(`No comment with id of ${req.params.id}`, 404)
-    )
-  }
-
-  if (
-    comment.userId.toString() == req.user._id.toString() ||
-    comment.videoId.userId.toString() == req.user._id.toString()
-  ) {
-    await comment.remove()
-  } else {
-    return next(
-      new ErrorResponse(`You are not authorized to delete this comment`, 400)
-    )
-  }
-
-  return res.status(200).json({ success: true, comment })
+  return res
+    .status(200)
+    .json({ success: true, data: { feeling: feeling.type } })
 })
