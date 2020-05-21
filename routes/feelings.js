@@ -1,18 +1,15 @@
 const express = require('express')
-const { createFeeling } = require('../controllers/feelings')
+const { createFeeling, checkFeeling } = require('../controllers/feelings')
 
 const router = express.Router()
 
-// const advancedResults = require('../middleware/advancedResults')
 const { protect, authorize } = require('../middleware/auth')
 
 router.use(protect)
-// router.use(authorize('admin'))
 
-router
-  .route('/')
-  // .get(advancedResults(Category), getCategories)
-  .post(createFeeling)
+router.route('/').post(createFeeling)
+
+router.route('/check').post(checkFeeling)
 
 // router
 //   .route('/:id')
