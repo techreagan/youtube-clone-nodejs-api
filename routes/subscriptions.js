@@ -28,6 +28,11 @@ router.route('/subscribers').get(
 
 router
   .route('/channels')
-  .get(advancedResults(Subscription, [{ path: 'channelId' }]), getChannels)
+  .get(
+    advancedResults(Subscription, [
+      { path: 'channelId', select: 'photoUrl channelName' }
+    ]),
+    getChannels
+  )
 
 module.exports = router
