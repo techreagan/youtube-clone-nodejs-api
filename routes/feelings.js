@@ -1,15 +1,21 @@
 const express = require('express')
-const { createFeeling, checkFeeling } = require('../controllers/feelings')
+const {
+  createFeeling,
+  checkFeeling,
+  getLikedVideos
+} = require('../controllers/feelings')
 
 const router = express.Router()
 
-const { protect, authorize } = require('../middleware/auth')
+const { protect } = require('../middleware/auth')
 
 router.use(protect)
 
 router.route('/').post(createFeeling)
 
 router.route('/check').post(checkFeeling)
+
+router.route('/videos').get(getLikedVideos)
 
 // router
 //   .route('/:id')

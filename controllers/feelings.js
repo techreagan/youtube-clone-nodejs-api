@@ -72,3 +72,23 @@ exports.checkFeeling = asyncHandler(async (req, res, next) => {
     .status(200)
     .json({ success: true, data: { feeling: feeling.type } })
 })
+
+// @desc    Get liked videos
+// @route   GET /api/v1/feelings/videos
+// @access  Private/User
+exports.getLikedVideos = asyncHandler(async (req, res, next) => {
+  const likes = await Feeling.find({
+    userId: req.user._id,
+    type: 'like'
+  })
+
+  const videosId = likes.map((video) => {
+    return {
+      _id: video.videoId.toString()
+    }
+  })
+
+  const videos = await Video.find({ status: 'public' }).or(videosId)
+
+  return res.status(200).json({ success: true, data: videos })
+})
