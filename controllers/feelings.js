@@ -1,5 +1,7 @@
 const asyncHandler = require('../middleware/async')
 const ErrorResponse = require('../utils/errorResponse')
+const advancedResultsFunc = require('../utils/advancedResultsFunc')
+
 const Video = require('../models/Video')
 const Feeling = require('../models/Feeling')
 
@@ -88,7 +90,9 @@ exports.getLikedVideos = asyncHandler(async (req, res, next) => {
     }
   })
 
-  const videos = await Video.find({ status: 'public' }).or(videosId)
+  // const videos = await Video.find({ status: 'public' }).or(videosId)
 
-  return res.status(200).json({ success: true, data: videos })
+  advancedResultsFunc(req, res, Video, 'public', videosId)
+
+  // return res.status(200).json({ success: true, data: videos })
 })

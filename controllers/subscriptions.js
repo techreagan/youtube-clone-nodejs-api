@@ -1,6 +1,7 @@
 const asyncHandler = require('../middleware/async')
 const ErrorResponse = require('../utils/errorResponse')
-const Comment = require('../models/Comment')
+const advancedResultsFunc = require('../utils/advancedResultsFunc')
+
 const Video = require('../models/Video')
 const Subscription = require('../models/Subscription')
 
@@ -81,7 +82,8 @@ exports.getSubscripedVideos = asyncHandler(async (req, res, next) => {
     }
   })
 
-  const videos = await Video.find({ status: 'public' }).or(channelsId)
+  // const videos = await Video.find({ status: 'public' }).or(channelsId)
 
-  return res.status(200).json({ success: true, data: videos })
+  advancedResultsFunc(req, res, Video, 'public', channelsId)
+  // return res.status(200).json({ success: true, data: videos })
 })
