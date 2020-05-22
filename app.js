@@ -75,7 +75,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use((req, res, next) => {
   setTimeout(() => {
     next()
-  }, 2000)
+  }, 1000)
 })
 
 const versionOne = (routeName) => `/api/v1/${routeName}`

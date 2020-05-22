@@ -4,7 +4,7 @@ const {
   getSubscribers,
   createSubscriber,
   checkSubscription,
-  getSubscripedVideos
+  getSubscribedVideos
 } = require('../controllers/subscriptions')
 
 const Subscription = require('../models/Subscription')
@@ -36,6 +36,6 @@ router
     getChannels
   )
 
-router.route('/videos').get(protect, getSubscripedVideos)
+router.route('/videos').get(protect, getSubscribedVideos)
 
 module.exports = router

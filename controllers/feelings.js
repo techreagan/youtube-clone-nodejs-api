@@ -91,8 +91,8 @@ exports.getLikedVideos = asyncHandler(async (req, res, next) => {
   })
 
   // const videos = await Video.find({ status: 'public' }).or(videosId)
-
-  advancedResultsFunc(req, res, Video, 'public', videosId)
+  const populates = [{ path: 'userId', select: 'photoUrl channelName' }]
+  advancedResultsFunc(req, res, Video, populates, 'public', videosId)
 
   // return res.status(200).json({ success: true, data: videos })
 })
