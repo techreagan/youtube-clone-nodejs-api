@@ -1,4 +1,11 @@
-module.exports = async (req, res, model, status = '', or = []) => {
+module.exports = async (
+  req,
+  res,
+  model,
+  populates = [],
+  status = '',
+  or = []
+) => {
   req.query.status = status
 
   const reqQuery = { ...req.query }
@@ -38,6 +45,12 @@ module.exports = async (req, res, model, status = '', or = []) => {
 
   if (parseInt(req.query.limit) !== 0) {
     query = query.skip(startIndex).limit(limit)
+  }
+
+  if (populates) {
+    populates.forEach((populate) => {
+      query = query.populate(populate)
+    })
   }
 
   const results = await query
