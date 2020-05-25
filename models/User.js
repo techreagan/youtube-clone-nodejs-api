@@ -46,6 +46,8 @@ const UserSchema = new Schema(
   { toJSON: { virtuals: true }, toObject: { virtuals: true }, timestamps: true }
 )
 
+UserSchema.index({ channelName: 'text' })
+
 UserSchema.virtual('subscribers', {
   ref: 'Subscription',
   localField: '_id',

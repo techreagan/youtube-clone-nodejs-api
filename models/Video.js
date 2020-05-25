@@ -43,6 +43,8 @@ const VideoSchema = new Schema(
   { toJSON: { virtuals: true }, toObject: { virtuals: true }, timestamps: true }
 )
 
+VideoSchema.index({ title: 'text' })
+
 VideoSchema.virtual('dislikes', {
   ref: 'Feeling',
   localField: '_id',
