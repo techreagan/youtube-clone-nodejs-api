@@ -50,3 +50,22 @@ exports.deleteHistory = asyncHandler(async (req, res, next) => {
 
   return res.status(200).json({ success: true, data: {} })
 })
+
+// @desc    Delete Histories
+// @route   DELETE /api/v1/histories/:type/all
+// @access  Private
+exports.deleteHistories = asyncHandler(async (req, res, next) => {
+  // console.log(req.body.type)
+  const histories = await History.deleteMany({
+    type: req.params.type,
+    userId: req.user._id
+  })
+  // console.log(histories)
+  // if (!histories) {
+  //   return next(
+  //     new ErrorResponse(`No histories with type ${req.params.type}`, 404)
+  //   )
+  // }
+
+  return res.status(200).json({ success: true, data: {} })
+})

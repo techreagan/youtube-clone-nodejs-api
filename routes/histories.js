@@ -2,7 +2,8 @@ const express = require('express')
 const {
   getHistories,
   createHistory,
-  deleteHistory
+  deleteHistory,
+  deleteHistories
 } = require('../controllers/histories')
 
 const History = require('../models/History')
@@ -17,15 +18,15 @@ router.use(protect)
 router
   .route('/')
   .get(
-    advancedResults(History, [{ path: 'videoId' }], { status: 'private' }),
+    advancedResults(History, [{ path: 'videoId' }, { path: 'userId' }], {
+      status: 'private'
+    }),
     getHistories
   )
   .post(createHistory)
 
-router
-  .route('/:id')
-  // .get(getCategory)
-  // .put(updateCategory)
-  .delete(deleteHistory)
+router.route('/:id').delete(deleteHistory)
+
+router.delete('/:type/all', deleteHistories)
 
 module.exports = router
