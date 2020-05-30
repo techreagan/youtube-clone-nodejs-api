@@ -14,7 +14,9 @@ exports.search = asyncHandler(async (req, res, next) => {
 
   const text = req.body.text
 
-  let channels = await User.find({ $text: { $search: text } })
+  let channels = await User.find({ $text: { $search: text } }).populate({
+    path: 'videos'
+  })
   const videos = await Video.find({ $text: { $search: text } }).populate({
     path: 'userId'
   })
@@ -39,7 +41,7 @@ exports.search = asyncHandler(async (req, res, next) => {
     search = search.slice(startIndex, endIndex)
   }
 
-  console.log(search.length)
+  // console.log(search.length)
   // console.log(search)
 
   // Pagination result
