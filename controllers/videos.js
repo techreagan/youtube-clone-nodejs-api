@@ -108,6 +108,30 @@ exports.updateVideo = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: video })
 })
 
+// @desc    Update video views
+// @route   PUT /api/v1/videos/:id/views
+// @access  Private
+exports.updateViews = asyncHandler(async (req, res, next) => {
+  let video = await Video.findById(req.params.id)
+
+  if (!video)
+    return next(new ErrorResponse(`No video with that id of ${req.params.id}`))
+
+  video.views++
+
+  await video.save()
+
+  // const video = await Video.findByIdAndUpdate(req.params.id, {views: req.body, {
+  //   new: true,
+  //   runValidators: true
+  // })
+
+  // if (!video)
+  //   return next(new ErrorResponse(`No video with that id of ${req.params.id}`))
+
+  res.status(200).json({ success: true, data: video })
+})
+
 // @desc    Upload thumbnail
 // @route   PUT /api/v1/videos/:id/thumbnail
 // @access  Private

@@ -6,6 +6,7 @@ const advancedResults = (
   visibility = { status: '', filter: '' }
 ) => async (req, res, next) => {
   let query
+
   if (visibility.status == 'private') {
     req.query.userId = req.user._id
     if (visibility.filter == 'channel') {

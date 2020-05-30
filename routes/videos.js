@@ -4,6 +4,7 @@ const {
   getVideo,
   videoUpload,
   updateVideo,
+  updateViews,
   uploadVideoThumbnail,
   deleteVideo
 } = require('../controllers/videos')
@@ -14,9 +15,6 @@ const router = express.Router()
 
 const advancedResults = require('../middleware/advancedResults')
 const { protect, authorize } = require('../middleware/auth')
-
-// router.use(protect)
-// router.use(authorize('admin'))
 
 router.post('/', protect, videoUpload)
 
@@ -61,5 +59,6 @@ router
   .delete(protect, deleteVideo)
 
 router.route('/:id/thumbnails').put(protect, uploadVideoThumbnail)
+router.route('/:id/views').put(protect, updateViews)
 
 module.exports = router
