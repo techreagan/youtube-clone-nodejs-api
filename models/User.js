@@ -62,7 +62,6 @@ UserSchema.virtual('videos', {
   foreignField: 'userId',
   justOne: false,
   count: true
-  // match: { userId: this._id }
 })
 
 UserSchema.plugin(uniqueValidator, { message: '{PATH} already exists.' })

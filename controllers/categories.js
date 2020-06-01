@@ -30,7 +30,7 @@ exports.getCategory = asyncHandler(async (req, res, next) => {
 exports.createCategory = asyncHandler(async (req, res, next) => {
   const category = await Category.create({
     ...req.body,
-    userId: req.user.id,
+    userId: req.user.id
   })
 
   return res.status(200).json({ sucess: true, data: category })
@@ -43,7 +43,7 @@ exports.updateCategory = asyncHandler(async (req, res, next) => {
   const category = await Category.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
-    context: 'query',
+    context: 'query'
   })
 
   if (!category)
@@ -58,7 +58,6 @@ exports.updateCategory = asyncHandler(async (req, res, next) => {
 // @route   DELETE /api/v1/categories/:id
 // @access  Private/Admin
 exports.deleteCategory = asyncHandler(async (req, res, next) => {
-  // const category = await Category.findByIdAndDelete(req.params.id)
   let category = await Category.findById(req.params.id)
 
   if (!category) {

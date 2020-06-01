@@ -7,14 +7,14 @@ const Comment = require('../models/Comment')
 
 // @desc    Get videos
 // @route   GET /api/v1/videos
-// @access  Private/Admin
+// @access  Private
 exports.getVideos = asyncHandler(async (req, res, next) => {
   res.status(200).json(res.advancedResults)
 })
 
 // @desc    Get single video
 // @route   GET /api/v1/videos/:id
-// @access  Private/Admin
+// @access  Private
 exports.getVideo = asyncHandler(async (req, res, next) => {
   const video = await Video.findById(req.params.id)
     .populate({
@@ -121,14 +121,6 @@ exports.updateViews = asyncHandler(async (req, res, next) => {
 
   await video.save()
 
-  // const video = await Video.findByIdAndUpdate(req.params.id, {views: req.body, {
-  //   new: true,
-  //   runValidators: true
-  // })
-
-  // if (!video)
-  //   return next(new ErrorResponse(`No video with that id of ${req.params.id}`))
-
   res.status(200).json({ success: true, data: video })
 })
 
@@ -180,10 +172,9 @@ exports.uploadVideoThumbnail = asyncHandler(async (req, res, next) => {
 
 // @desc    Delete video
 // @route   DELETE /api/v1/videos/:id
-// @access  Private/Admin
+// @access  Private
 exports.deleteVideo = asyncHandler(async (req, res, next) => {
-  // const video = await video.findByIdAndDelete(req.params.id)
-  let video = await Video.findById(req.params.id)
+  let video = await Video.findOne({ userId: req.user._id, _id: req.params.id })
 
   if (!video) {
     return next(new ErrorResponse(`No video with id of ${req.params.id}`, 404))

@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-// const uniqueValidator = require('mongoose-unique-validator')
 
 const Schema = mongoose.Schema
 
@@ -11,7 +10,6 @@ const VideoSchema = new Schema(
     },
     description: {
       type: String,
-      // minlength: [6, 'Must be six characters long'],
       default: ''
     },
     thumbnailUrl: {
@@ -70,7 +68,5 @@ VideoSchema.virtual('comments', {
   justOne: false,
   count: true
 })
-
-// VideoSchema.plugin(uniqueValidator, { message: '{PATH} already exists.' })
 
 module.exports = mongoose.model('Video', VideoSchema)
