@@ -1,12 +1,12 @@
 const asyncHandler = require('../middleware/async')
 const ErrorResponse = require('../utils/errorResponse')
-const Category = require('../models/Category')
+
 const History = require('../models/History')
 const Video = require('../models/Video')
 
 // @desc    Get Histories
 // @route   GET /api/v1/histories
-// @access  Private/Admin
+// @access  Private
 exports.getHistories = asyncHandler(async (req, res, next) => {
   res.status(200).json(res.advancedResults)
 })
@@ -55,17 +55,10 @@ exports.deleteHistory = asyncHandler(async (req, res, next) => {
 // @route   DELETE /api/v1/histories/:type/all
 // @access  Private
 exports.deleteHistories = asyncHandler(async (req, res, next) => {
-  // console.log(req.body.type)
-  const histories = await History.deleteMany({
+  await History.deleteMany({
     type: req.params.type,
     userId: req.user._id
   })
-  // console.log(histories)
-  // if (!histories) {
-  //   return next(
-  //     new ErrorResponse(`No histories with type ${req.params.type}`, 404)
-  //   )
-  // }
 
   return res.status(200).json({ success: true, data: {} })
 })

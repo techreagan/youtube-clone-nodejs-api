@@ -7,7 +7,7 @@ const Feeling = require('../models/Feeling')
 
 // @desc    Create feeling
 // @route   POST /api/v1/feelings/
-// @access  Public
+// @access  Private
 exports.createFeeling = asyncHandler(async (req, res, next) => {
   req.body.userId = req.user._id
   const { type, userId, videoId } = req.body
@@ -49,17 +49,13 @@ exports.createFeeling = asyncHandler(async (req, res, next) => {
   // else - change feeling type
   feeling.type = type
   feeling = await feeling.save()
-  // feeling = await Feeling.findByIdAndUpdate(feeling._id, req.body, {
-  //   new: true,
-  //   runValidators: true
-  // })
 
   res.status(200).json({ success: true, data: feeling })
 })
 
 // @desc    Check feeling
 // @route   POST /api/v1/feelings/check
-// @access  Private/User
+// @access  Private
 exports.checkFeeling = asyncHandler(async (req, res, next) => {
   const feeling = await Feeling.findOne({
     videoId: req.body.videoId,
@@ -77,7 +73,7 @@ exports.checkFeeling = asyncHandler(async (req, res, next) => {
 
 // @desc    Get liked videos
 // @route   GET /api/v1/feelings/videos
-// @access  Private/User
+// @access  Private
 exports.getLikedVideos = asyncHandler(async (req, res, next) => {
   const likes = await Feeling.find({
     userId: req.user._id,
@@ -90,9 +86,6 @@ exports.getLikedVideos = asyncHandler(async (req, res, next) => {
     }
   })
 
-  // const videos = await Video.find({ status: 'public' }).or(videosId)
   const populates = [{ path: 'userId', select: 'photoUrl channelName' }]
   advancedResultsFunc(req, res, Video, populates, 'public', videosId)
-
-  // return res.status(200).json({ success: true, data: videos })
 })

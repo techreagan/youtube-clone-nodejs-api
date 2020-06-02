@@ -5,28 +5,23 @@ const advancedResultsFunc = require('../utils/advancedResultsFunc')
 const Video = require('../models/Video')
 const Subscription = require('../models/Subscription')
 
-// Get subscriber
-// Get Channels
-// Subscribe to a channel
-// Add subscribers to users
-
 // @desc    Get all subscribers
 // @route   GET /api/v1/subscriptions/subscribers
-// @access  Private/User
+// @access  Private
 exports.getSubscribers = asyncHandler(async (req, res, next) => {
   res.status(200).json(res.advancedResults)
 })
 
 // @desc    Get all channels subscribed to
 // @route   GET /api/v1/subscriptions/channels
-// @access  Private/User
+// @access  Private
 exports.getChannels = asyncHandler(async (req, res, next) => {
   res.status(200).json(res.advancedResults)
 })
 
 // @desc    Check subscription
 // @route   POST /api/v1/subscriptions/check
-// @access  Private/User
+// @access  Private
 exports.checkSubscription = asyncHandler(async (req, res, next) => {
   const channel = await Subscription.findOne({
     channelId: req.body.channelId,
@@ -70,7 +65,7 @@ exports.createSubscriber = asyncHandler(async (req, res, next) => {
 
 // @desc    Get subscribed videos
 // @route   GET /api/v1/subscriptions/videos
-// @access  Private/User
+// @access  Private
 exports.getSubscribedVideos = asyncHandler(async (req, res, next) => {
   const channels = await Subscription.find({
     subscriberId: req.user._id
@@ -82,8 +77,6 @@ exports.getSubscribedVideos = asyncHandler(async (req, res, next) => {
     }
   })
 
-  // const videos = await Video.find({ status: 'public' }).or(channelsId)
   const populates = [{ path: 'userId', select: 'photoUrl channelName' }]
   advancedResultsFunc(req, res, Video, populates, 'public', channelsId)
-  // return res.status(200).json({ success: true, data: videos })
 })

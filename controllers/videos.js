@@ -2,19 +2,19 @@ const path = require('path')
 const fs = require('fs')
 const asyncHandler = require('../middleware/async')
 const ErrorResponse = require('../utils/errorResponse')
+
 const Video = require('../models/Video')
-const Comment = require('../models/Comment')
 
 // @desc    Get videos
-// @route   GET /api/v1/videos
-// @access  Private
+// @route   GET /api/v1/videos/public or /api/v1/videos/private
+// @access  Public Or Private
 exports.getVideos = asyncHandler(async (req, res, next) => {
   res.status(200).json(res.advancedResults)
 })
 
 // @desc    Get single video
 // @route   GET /api/v1/videos/:id
-// @access  Private
+// @access  Public
 exports.getVideo = asyncHandler(async (req, res, next) => {
   const video = await Video.findById(req.params.id)
     .populate({
@@ -28,22 +28,14 @@ exports.getVideo = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse(`No video with that id of ${req.params.id}`))
   }
 
-  // const comment = await Comment.find({ videoId: video._id })
-  // console.log(comment)
-  // video._doc.comments = comment
   res.status(200).json({ sucess: true, data: video })
 })
 
 // @desc    Upload video
 // @route   PUT /api/v1/video
-// @access  Private Admin
+// @access  Private
 exports.videoUpload = asyncHandler(async (req, res, next) => {
   let videoModel = await Video.create({ userId: req.user._id })
-  // if (!category) {
-  //   return next(
-  //     new ErrorResponse(`Category not found with id of ${req.params.id}`, 404)
-  //   )
-  // }
 
   if (!req.files) {
     return next(new ErrorResponse(`Please upload a video`, 404))
@@ -95,7 +87,7 @@ exports.videoUpload = asyncHandler(async (req, res, next) => {
 
 // @desc    Update video
 // @route   PUT /api/v1/videos/:id
-// @access  Private/Admin
+// @access  Private
 exports.updateVideo = asyncHandler(async (req, res, next) => {
   const video = await Video.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
@@ -110,7 +102,7 @@ exports.updateVideo = asyncHandler(async (req, res, next) => {
 
 // @desc    Update video views
 // @route   PUT /api/v1/videos/:id/views
-// @access  Private
+// @access  Public
 exports.updateViews = asyncHandler(async (req, res, next) => {
   let video = await Video.findById(req.params.id)
 
@@ -180,7 +172,6 @@ exports.deleteVideo = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse(`No video with id of ${req.params.id}`, 404))
   }
 
-  // if (video) {
   fs.unlink(
     `${process.env.FILE_UPLOAD_PATH}/videos/${video.url}`,
     async (err) => {
@@ -209,8 +200,4 @@ exports.deleteVideo = asyncHandler(async (req, res, next) => {
       )
     }
   )
-  // } else {
-  //   await category.remove()
-  //   return res.status(200).json({ success: true, category })
-  // }
 })

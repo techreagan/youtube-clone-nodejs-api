@@ -4,21 +4,20 @@ const Comment = require('../models/Comment')
 const Video = require('../models/Video')
 
 // @desc    Get comments
-// @route   GET /api/v1/categories
-// @access  Private/Admin
+// @route   GET /api/v1/comments
+// @access  Private
 exports.getComments = asyncHandler(async (req, res, next) => {
   res.status(200).json(res.advancedResults)
 })
 
 // @desc    Get comments by video id
 // @route   GET /api/v1/comments/:videoId/videos
-// @access  Private/Admin
+// @access  Public
 exports.getCommentByVideoId = asyncHandler(async (req, res, next) => {
   const comments = await Comment.find({ videoId: req.params.videoId })
     .populate('userId')
     .populate('replies')
     .sort('-createdAt')
-  // const comments = await Comment.find({})
 
   if (!comments) {
     return next(
@@ -33,7 +32,7 @@ exports.getCommentByVideoId = asyncHandler(async (req, res, next) => {
 
 // @desc    Create comment
 // @route   POST /api/v1/comments/
-// @access  Public
+// @access  Private
 exports.createComment = asyncHandler(async (req, res, next) => {
   console.log(req.body.videoId)
   let video = await Video.findOne({
@@ -56,7 +55,7 @@ exports.createComment = asyncHandler(async (req, res, next) => {
 
 // @desc    Update comment
 // @route   PUT /api/v1/comments/:id
-// @access  Private/Admin
+// @access  Private
 exports.updateComment = asyncHandler(async (req, res, next) => {
   let comment = await Comment.findById(req.params.id).populate('videoId')
 
@@ -85,9 +84,8 @@ exports.updateComment = asyncHandler(async (req, res, next) => {
 
 // @desc    Delete comment
 // @route   DELETE /api/v1/comments/:id
-// @access  Public
+// @access  Private
 exports.deleteComment = asyncHandler(async (req, res, next) => {
-  // const comment = await comment.findByIdAndDelete(req.params.id)
   let comment = await Comment.findById(req.params.id).populate('videoId')
 
   if (!comment) {
