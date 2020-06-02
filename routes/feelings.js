@@ -17,12 +17,4 @@ router.route('/check').post(checkFeeling)
 
 router.route('/videos').get(getLikedVideos)
 
-// router
-//   .route('/:id')
-//   // .get(getCategory)
-//   .put(updateComment)
-//   .delete(deleteComment)
-
-// router.route('/:videoId/videos').get(getCommentByVideoId)
-
 module.exports = router

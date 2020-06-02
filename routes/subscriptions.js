@@ -12,7 +12,7 @@ const Subscription = require('../models/Subscription')
 const router = express.Router()
 
 const advancedResults = require('../middleware/advancedResults')
-const { protect, authorize } = require('../middleware/auth')
+const { protect } = require('../middleware/auth')
 
 router.post('/', protect, createSubscriber)
 

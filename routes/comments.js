@@ -16,11 +16,7 @@ router
   // .get(advancedResults(Category), getCategories)
   .post(protect, createComment)
 
-router
-  .route('/:id')
-
-  .put(protect, updateComment)
-  .delete(protect, deleteComment)
+router.route('/:id').put(protect, updateComment).delete(protect, deleteComment)
 
 router.route('/:videoId/videos').get(getCommentByVideoId)
 
