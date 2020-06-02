@@ -9,6 +9,7 @@ const advancedResults = (
 
   if (visibility.status == 'private') {
     req.query.userId = req.user._id
+
     if (visibility.filter == 'channel') {
       req.query.channelId = req.user._id
       delete req.query.userId
