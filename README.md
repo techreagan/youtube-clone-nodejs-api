@@ -12,6 +12,31 @@
   - Forgot Password
 - Pagination and search where necessary
 - API Security (NoSQL Injections, XSS Attacks, http param pollution etc)
+- Video (CRUD)
+  - Upload video
+  - Upload video thumbnail
+  - Watch video
+  - Increase Views
+  - Like and dislike video
+  - Download video
+  - Comment & reply for video
+  - Update video details
+  - Delete video
+- Subscribe to a channel
+- View liked videos
+- Trending
+- Subscriptions
+- History (CRUD)
+  - Watch history
+  - Search history
+- Settings
+  - Modify channel name and email
+  - Change password
+  - Upload channel avatar
+
+## Frontend Repo
+
+Frontend was developed with vue js and vuetify [VueTube](https://github.com/techreagan/vue-nodejs-youtube-clone)
 
 ## API Documentation
 
@@ -23,7 +48,7 @@ Extensive and testing documentation with postman: [VueTube API](https://document
 
 Though the diagram uses sql data type, this diagram is to show you the various collections in the mongo database.
 
-![Screenshot](public/vue_tube_ERD.jpg)
+![Screenshot](screenshots/vue_tube_ERD.jpg)
 
 ## Requirement
 
@@ -91,6 +116,32 @@ node seeder -d
 ```console
 node run dev
 ```
+
+## Screenshots
+
+> Delete the screenshot folder if you download this code (Screenshots folder is 3.14mb in size).
+
+### Sign In
+
+![Screenshot](screenshots/20%20-%20Sign%20in.jpg)
+
+### Sign Up
+
+![Screenshot](screenshots/21%20-%20Sign%20up.jpg)
+
+### Home Page
+
+![Screenshot](screenshots/1%20-%20Home.jpg)
+
+### Watch Page
+
+![Screenshot](screenshots/7%20-%20Watch.jpg)
+
+### Upload Thumbnail Modal
+
+![Screenshot](screenshots/16%20-%20Upload%20Thumbnail%20Modal.jpg)
+
+For more screenshots check out the vue frontend repo [VueTube](https://github.com/techreagan/vue-nodejs-youtube-clone)
 
 ## License
 
