@@ -71,6 +71,10 @@ exports.getSubscribedVideos = asyncHandler(async (req, res, next) => {
     subscriberId: req.user._id
   })
 
+  if(channels.length === 0)
+    return res.status(200).json({ success: true, data: {} })
+
+
   const channelsId = channels.map((channel) => {
     return {
       userId: channel.channelId.toString()
