@@ -1,0 +1,42 @@
+[
+	{
+		"_id": "5eadf0c3c21d540d11f97eed",
+		"title": "Education",
+		"description": "Hello world",
+		"userId": "5e87b792864a202b95593539",
+		"createdAt": "2020-05-02T22:14:27.208Z",
+		"updatedAt": "2020-05-02T22:14:27.208Z"
+	},
+	{
+		"_id": "5eadef455d3d2248f0c6481c",
+		"title": "Fashion",
+		"description": "Hello world",
+		"userId": "5e87b792864a202b95593539",
+		"createdAt": "2020-05-02T22:08:05.158Z",
+		"updatedAt": "2020-05-02T22:08:05.158Z"
+	},
+	{
+		"_id": "5eadef3a5d3d2248f0c6481b",
+		"title": "People",
+		"description": "Hello world",
+		"userId": "5e87b792864a202b95593539",
+		"createdAt": "2020-05-02T22:07:54.830Z",
+		"updatedAt": "2020-05-02T22:07:54.830Z"
+	},
+	{
+		"_id": "5eadef275d3d2248f0c6481a",
+		"title": "Science & Technology",
+		"description": "Hello world",
+		"userId": "5e87b792864a202b95593539",
+		"createdAt": "2020-05-02T22:07:35.599Z",
+		"updatedAt": "2020-05-02T22:07:35.599Z"
+	},
+	{
+		"_id": "5e87b7d3864a202b9559353a",
+		"title": "Music",
+		"description": "Hello world",
+		"userId": "5e87b792864a202b95593539",
+		"createdAt": "2020-04-03T22:25:23.537Z",
+		"updatedAt": "2020-04-03T22:27:50.541Z"
+	}
+]
