@@ -98,7 +98,7 @@ npm install -g nodemon
 
 ### Note
 
-Make sure you run the seeder to get categories in your database.
+Make sure you run the seeder to get categories in your database or Create a user with the role admin, then add category with the category endpoint.
 
 Run database seeder
 
