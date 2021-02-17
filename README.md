@@ -96,6 +96,10 @@ Install nodemon globally
 npm install -g nodemon
 ```
 
+### Note
+
+Make sure you run the seeder to get categories in your database.
+
 Run database seeder
 
 - Seeder folder is \_data/
