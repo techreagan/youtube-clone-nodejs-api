@@ -22,5 +22,6 @@ const FeelingSchema = new Schema(
   },
   { timestamps: true }
 )
-
+FeelingSchema.index({ userId: 1 })
+FeelingSchema.index({ videoId: 1 })
 module.exports = mongoose.model('Feeling', FeelingSchema)

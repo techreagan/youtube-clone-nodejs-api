@@ -34,12 +34,17 @@ const UserSchema = new Schema(
       enum: ['user', 'admin'],
       default: 'user'
     },
-    password: {
-      type: String,
-      required: [true, 'Please add a password'],
-      minlength: [6, 'Must be six characters long'],
-      select: false
-    },
+      address:{
+          type: String,
+          unique: true,
+          required: true,
+      },
+    // password: {
+    //   type: String,
+    //   required: [true, 'Please add a password'],
+    //   minlength: [6, 'Must be six characters long'],
+    //   select: false
+    // },
     resetPasswordToken: String,
     resetPasswordExpire: Date
   },
@@ -71,18 +76,18 @@ UserSchema.pre('find', function () {
 })
 
 // Ecrypt Password
-UserSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) {
-    next()
-  }
+// UserSchema.pre('save', async function (next) {
+//   if (!this.isModified('password')) {
+//     next()
+//   }
+//
+//   const salt = await bcrypt.genSalt(10)
+//   this.password = await bcrypt.hash(this.password, salt)
+// })
 
-  const salt = await bcrypt.genSalt(10)
-  this.password = await bcrypt.hash(this.password, salt)
-})
-
-UserSchema.methods.matchPassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password)
-}
+// UserSchema.methods.matchPassword = async function (enteredPassword) {
+//   return await bcrypt.compare(enteredPassword, this.password)
+// }
 
 UserSchema.methods.getSignedJwtToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {

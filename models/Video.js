@@ -42,6 +42,7 @@ const VideoSchema = new Schema(
 )
 
 VideoSchema.index({ title: 'text' })
+VideoSchema.index({ userId: 1 })
 
 VideoSchema.virtual('dislikes', {
   ref: 'Feeling',

@@ -30,6 +30,7 @@ const feelingRoutes = require('./routes/feelings')
 const subscriptionRoutes = require('./routes/subscriptions')
 const historiesRoutes = require('./routes/histories')
 const searchRoutes = require('./routes/search')
+const SettlementRoutes = require('./routes/settlement')
 
 const app = express()
 
@@ -43,9 +44,9 @@ if (process.env.NODE_ENV === 'development') {
 
 // File uploading
 app.use(
-  fileupload({
-    createParentPath: true
-  })
+    fileupload({
+      createParentPath: true
+    })
 )
 
 // Sanitize data
@@ -98,7 +99,7 @@ const PORT = process.env.PORT
 
 const server = app.listen(PORT, () => {
   console.log(
-    `We are live on ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold
+      `We are live on ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold
   )
 })
 

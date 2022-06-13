@@ -1,4 +1,5 @@
 const crypto = require('crypto')
+const web3Utils = require ("web3-utils");
 const path = require('path')
 const asyncHandler = require('../middleware/async')
 const ErrorResponse = require('../utils/errorResponse')
@@ -6,18 +7,43 @@ const sendEmail = require('../utils/sendEmail')
 
 const User = require('../models/User')
 
+const ethSigUtil = require("eth-sig-util");
+
+const checkSignature = (nonce, signature) =>{
+  const msgParams = {
+    data: nonce,
+    sig: signature
+  };
+  return ethSigUtil.recoverPersonalSignature(msgParams);
+}
+
 // @desc    Register user
 // @route   POST /api/v1/auth/register
 // @access  Public
 exports.register = asyncHandler(async (req, res, next) => {
-  let { channelName, email, password } = req.body
-
+  let { channelName, email, address,timespan,signature } = req.body
+  address = address.toLowerCase()
   email = email.toLowerCase()
 
-  user = await User.create({
+  let message = web3Utils.sha3(address+timespan)
+
+  let addr = checkSignature(message, signature);
+
+  addr = addr.toLowerCase()
+
+  if (addr !== address) {
+    return res.status(400).json({
+      success: false,
+      error: [
+        { field: 'address', message: 'signature is incorrect' }
+      ]
+    })
+  }
+
+  let user = await User.create({
     channelName,
     email,
-    password
+    address
   })
 
   sendTokenResponse(user, 200, res)
@@ -27,23 +53,18 @@ exports.register = asyncHandler(async (req, res, next) => {
 // @route   POST /api/v1/auth/login
 // @access  Public
 exports.login = asyncHandler(async (req, res, next) => {
-  let { email, password } = req.body
-
-  if (!email || !password) {
-    return next(new ErrorResponse('Please provide an email and password', 400))
-  }
-
-  email = email.toLowerCase()
-
-  const user = await User.findOne({ email }).select('+password')
-
-  if (!user) {
+  let { address,timespan,signature } = req.body
+  address = address.toLowerCase()
+  let message = web3Utils.sha3(address+timespan);
+  let addr = checkSignature(message, signature);
+  addr = addr.toLowerCase()
+  if (addr !== address) {
     return next(new ErrorResponse('Invalid credentials', 400))
   }
 
-  const isMatch = await user.matchPassword(password)
+  const user = await User.findOne({ address })
 
-  if (!isMatch) {
+  if (!user) {
     return next(new ErrorResponse('Invalid credentials', 400))
   }
 

@@ -2,3 +2,7 @@ package-lock.json
 .env
 public/uploads
 .vscode
+.idea/
+.DS_Store
+node_modules
+config/.env

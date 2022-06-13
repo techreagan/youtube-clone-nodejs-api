@@ -1,5 +1,6 @@
 const express = require('express')
 const {
+    undone,
   getVideos,
   getVideo,
   videoUpload,
@@ -17,6 +18,8 @@ const advancedResults = require('../middleware/advancedResults')
 const { protect } = require('../middleware/auth')
 
 router.post('/', protect, videoUpload)
+
+router.get('/undone', protect, undone)
 
 router.route('/private').get(
   protect,

@@ -20,7 +20,7 @@ exports.getVideo = asyncHandler(async (req, res, next) => {
     .populate({
       path: 'categoryId'
     })
-    .populate({ path: 'userId', select: 'channelName subscribers photoUrl' })
+    .populate({ path: 'userId', select: 'channelName subscribers photoUrl address' })
     .populate({ path: 'likes' })
     .populate({ path: 'dislikes' })
     .populate({ path: 'comments' })
@@ -31,59 +31,71 @@ exports.getVideo = asyncHandler(async (req, res, next) => {
   res.status(200).json({ sucess: true, data: video })
 })
 
+exports.undone = asyncHandler(async (req, res, next) => {
+    const video = await Video.findOne({userId:req.user._id , status:"draft"});
+    res.status(200).json({ success: true, data: video });
+})
+
 // @desc    Upload video
 // @route   PUT /api/v1/video
 // @access  Private
 exports.videoUpload = asyncHandler(async (req, res, next) => {
-  let videoModel = await Video.create({ userId: req.user._id })
-
-  if (!req.files) {
-    return next(new ErrorResponse(`Please upload a video`, 404))
-  }
-
-  const video = req.files.video
-
-  if (!video.mimetype.startsWith('video')) {
-    await videoModel.remove()
-    return next(new ErrorResponse(`Please upload a video`, 404))
-  }
-  console.log(video.size, process.env.MAX_FILE_UPLOAD * 5)
-  if (video.size > process.env.MAX_FILE_UPLOAD * 5) {
-    await videoModel.remove()
-    return next(
-      new ErrorResponse(
-        `Please upload a video less than ${
-          (process.env.MAX_FILE_UPLOAD * 5) / 1000 / 1000
-        }mb`,
-        404
-      )
-    )
-  }
-  video.originalName = video.name.split('.')[0]
-  video.name = `video-${videoModel._id}${path.parse(video.name).ext}`
-
-  video.mv(
-    `${process.env.FILE_UPLOAD_PATH}/videos/${video.name}`,
-    async (err) => {
-      if (err) {
-        await videoModel.remove()
-        console.error(err)
-        return next(new ErrorResponse(`Problem with video upload`, 500))
-      }
-
-      videoModel = await Video.findByIdAndUpdate(
-        videoModel._id,
-        {
-          url: video.name,
-          title: video.originalName
-        },
-        { new: true, runValidators: true }
-      )
-
-      res.status(200).json({ success: true, data: videoModel })
-    }
-  )
+    let video = req.body;
+    video.userId = req.user._id;
+    let videoModel = await Video.create(video)
+    res.status(200).json({ success: true, data: videoModel });
 })
+
+// exports.videoUpload = asyncHandler(async (req, res, next) => {
+//   let videoModel = await Video.create({ userId: req.user._id })
+//
+//   if (!req.files) {
+//     return next(new ErrorResponse(`Please upload a video`, 404))
+//   }
+//
+//   const video = req.files.video
+//
+//   if (!video.mimetype.startsWith('video')) {
+//     await videoModel.remove()
+//     return next(new ErrorResponse(`Please upload a video`, 404))
+//   }
+//   console.log(video.size, process.env.MAX_FILE_UPLOAD * 5)
+//   if (video.size > process.env.MAX_FILE_UPLOAD * 5) {
+//     await videoModel.remove()
+//     return next(
+//       new ErrorResponse(
+//         `Please upload a video less than ${
+//           (process.env.MAX_FILE_UPLOAD * 5) / 1000 / 1000
+//         }mb`,
+//         404
+//       )
+//     )
+//   }
+//   video.originalName = video.name.split('.')[0]
+//   video.name = `video-${videoModel._id}${path.parse(video.name).ext}`
+//
+//   video.mv(
+//     `${process.env.FILE_UPLOAD_PATH}/videos/${video.name}`,
+//     async (err) => {
+//       if (err) {
+//         await videoModel.remove()
+//         console.error(err)
+//         return next(new ErrorResponse(`Problem with video upload`, 500))
+//       }
+//
+//       videoModel = await Video.findByIdAndUpdate(
+//         videoModel._id,
+//         {
+//           url: video.name,
+//           title: video.originalName
+//         },
+//         { new: true, runValidators: true }
+//       )
+//
+//       res.status(200).json({ success: true, data: videoModel })
+//     }
+//   )
+// })
 
 // @desc    Update video
 // @route   PUT /api/v1/videos/:id
@@ -172,17 +184,17 @@ exports.deleteVideo = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse(`No video with id of ${req.params.id}`, 404))
   }
 
-  fs.unlink(
-    `${process.env.FILE_UPLOAD_PATH}/videos/${video.url}`,
-    async (err) => {
-      if (err) {
-        return next(
-          new ErrorResponse(
-            `Something went wrong, couldn't delete video photo`,
-            500
-          )
-        )
-      }
+  // fs.unlink(
+  //   `${process.env.FILE_UPLOAD_PATH}/videos/${video.url}`,
+  //   async (err) => {
+  //     if (err) {
+  //       return next(
+  //         new ErrorResponse(
+  //           `Something went wrong, couldn't delete video photo`,
+  //           500
+  //         )
+  //       )
+  //     }
       fs.unlink(
         `${process.env.FILE_UPLOAD_PATH}/thumbnails/${video.thumbnailUrl}`,
         async (err) => {
@@ -198,6 +210,6 @@ exports.deleteVideo = asyncHandler(async (req, res, next) => {
           return res.status(200).json({ success: true, video })
         }
       )
-    }
-  )
+    // }
+  // )
 })

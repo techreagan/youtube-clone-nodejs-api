@@ -54,13 +54,13 @@ exports.createSubscriber = asyncHandler(async (req, res, next) => {
     await subscription.remove()
     return res.status(200).json({ success: true, data: {} })
   } else {
-    subscription = await Subscription.create({
-      subscriberId: req.user._id,
-      channelId: channelId
-    })
+    return res.status(200).json({success: true, data: {}})
+        // subscription = await Subscription.create({
+        //     subscriberId: req.user._id,
+        //     channelId: channelId
+        // })
   }
-
-  res.status(200).json({ success: true, data: subscription })
+  // res.status(200).json({success: true, data: subscription})
 })
 
 // @desc    Get subscribed videos
