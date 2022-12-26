@@ -2,3 +2,4 @@ package-lock.json
 .env
 public/uploads
 .vscode
+node_modules
