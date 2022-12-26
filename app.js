@@ -38,14 +38,14 @@ app.use(express.json())
 app.use(cookieParser())
 
 if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'))
+	app.use(morgan('dev'))
 }
 
 // File uploading
 app.use(
-  fileupload({
-    createParentPath: true
-  })
+	fileupload({
+		createParentPath: true,
+	})
 )
 
 // Sanitize data
@@ -97,14 +97,14 @@ app.use(errorHandler)
 const PORT = process.env.PORT
 
 const server = app.listen(PORT, () => {
-  console.log(
-    `We are live on ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold
-  )
+	console.log(
+		`We are live on ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold
+	)
 })
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {
-  console.log(`Error: ${err.message}`.red)
-  // Close server & exit process
-  server.close(() => process.exit(1))
+	console.log(`Error: ${err.message}`.red)
+	// Close server & exit process
+	server.close(() => process.exit(1))
 })
