@@ -1,0 +1,37 @@
+version: '3.9'
+
+services:
+  mongodb:
+    image: 'mongo'
+    volumes:
+      - data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoadmin
+      MONGO_INITDB_ROOT_PASSWORD: secret
+
+  server:
+    build: .
+    ports:
+      - 3001:3001
+    volumes:
+      - .:/app
+      - uploads:/app/public/uploads
+      - /app/node_modules
+    env_file:
+      - ./config/.env
+    depends_on:
+      - mongodb
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8001:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: mongoadmin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: secret
+      ME_CONFIG_MONGODB_URL: mongodb://mongoadmin:secret@mongodb:27017/
+
+volumes:
+  uploads:
+  data:
