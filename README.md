@@ -118,7 +118,7 @@ node seeder -d
 ## Start web server
 
 ```console
-node run dev
+npm run dev
 ```
 
 ## Screenshots
