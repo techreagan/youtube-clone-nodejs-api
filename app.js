@@ -52,7 +52,9 @@ app.use(
 app.use(mongoSanitize())
 
 // Set security headers
-app.use(helmet())
+app.use(helmet({
+	crossOriginResourcePolicy: false,
+}))
 
 // Prevent XSS attacks
 app.use(xss())
